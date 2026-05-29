@@ -16,5 +16,6 @@ jobs:
       image_name: ghcr.io/notcavnfox/jellystat
       smoke_port: 3000
       smoke_path: /
+      run_smoke: false   # needs Postgres to boot — validated via compose integration
       compose_test: true
       publish_edge: true

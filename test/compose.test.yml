@@ -1,29 +1,27 @@
-# Ephemeral integration stand-up (app + throwaway Postgres).
+# Ephemeral integration stand-up (app + throwaway Postgres; readiness polled from host).
 services:
   app:
     image: ${IMAGE:-localbuild:ci}
+    ports:
+      - "127.0.0.1:3000:3000"
     environment:
-      - POSTGRES_USER=test
+      - POSTGRES_USER=jellystat
       - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=jellystat
       - POSTGRES_IP=db
       - POSTGRES_PORT=5432
       - JWT_SECRET=ci-not-secret
     depends_on:
       db:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:3000/ || exit 1"]
-      interval: 5s
-      timeout: 5s
-      retries: 24
-      start_period: 20s
   db:
     image: postgres:18.1
     environment:
-      - POSTGRES_USER=test
+      - POSTGRES_USER=jellystat
       - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=jellystat
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U test"]
+      test: ["CMD-SHELL", "pg_isready -U jellystat"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 12
